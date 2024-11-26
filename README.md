@@ -20,11 +20,13 @@ The concept of attention in LLMs is inspired by human cognition—specifically, 
 
 ### Vocabulary and Attention
 
+![](https://miro.medium.com/v2/resize:fit:1050/1*UUkr5OyPj-dDl8OaPb-Vow.png)
+
 LLMs are trained on a vast amount of text data, during which they build a large vocabulary of words and phrases. Each word in the model's vocabulary is represented as a high-dimensional vector, which captures its semantic meaning based on the contexts in which it appears in the training data.
 
 ### How Attention Works in LLMs
 
-![](https://miro.medium.com/v2/resize:fit:1050/1*UUkr5OyPj-dDl8OaPb-Vow.png)
+![](https://miro.medium.com/v2/resize:fit:700/0*xPEVno1WCUNko1DP.png)
 
 In LLMs, the attention mechanism works by assigning different weights to different parts of the input. These weights determine how much 'attention' the model pays to each part of the input when generating each part of the output.
 
@@ -47,9 +49,7 @@ While attention mechanisms are pivotal for LLM performance, they are not infalli
 
 These issues are particularly evident in tasks that require precise data extraction or formatting, such as compiling lists from databases or generating structured reports.
 
-## Case Study: Extracting Movie Titles from MongoDB Using Ollama's LLM
-
-To illustrate the challenges posed by the "sins of attention" and the efficacy of verification and retry mechanisms, let's examine a practical scenario: extracting 1,000 movie titles from a MongoDB database using Ollama's LLM.
+## Case Study: Extracting Movie Titles from a Database using an LLM
 
 ### The Challenge
 
