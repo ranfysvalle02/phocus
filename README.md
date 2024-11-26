@@ -3,7 +3,7 @@ getting the LLM to pay attention at all costs.
 
 ---
 
-# Overcoming the ["Sins of Attention"](https://github.com/ranfysvalle02/lost-in-the-middle) 
+# Overcoming the "Sins of Attention" 
 
 At the heart of LLMs lies the **attention mechanism**, a computational strategy that allows models to weigh the importance of different words in a sentence relative to each other. This mechanism enables models to capture contextual relationships and generate coherent, contextually relevant responses.
 
