@@ -26,7 +26,7 @@ LLMs are trained on a vast amount of text data, during which they build a large 
 
 ### How Attention Works in LLMs
 
-![](https://miro.medium.com/v2/resize:fit:700/0*xPEVno1WCUNko1DP.png)
+![](https://substackcdn.com/image/fetch/f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F2d632b81-5bd6-432a-a456-37f20788be20_1180x614.png)
 
 In LLMs, the attention mechanism works by assigning different weights to different parts of the input. These weights determine how much 'attention' the model pays to each part of the input when generating each part of the output.
 
