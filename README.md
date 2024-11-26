@@ -24,6 +24,8 @@ LLMs are trained on a vast amount of text data, during which they build a large 
 
 ### How Attention Works in LLMs
 
+![](https://developers.google.com/static/machine-learning/crash-course/images/Theanimaldidntcrossthestreet.png)
+
 In LLMs, the attention mechanism works by assigning different weights to different parts of the input. These weights determine how much 'attention' the model pays to each part of the input when generating each part of the output.
 
 Consider a more complex sentence translation task. When translating the English sentence "The quick brown fox jumps over the lazy dog" to Spanish ("El rápido zorro marrón salta sobre el perro perezoso"), the model needs to 'pay attention' to different words in the English sentence when generating each word in the Spanish sentence. 
