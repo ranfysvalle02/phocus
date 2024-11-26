@@ -3,11 +3,7 @@ getting the LLM to pay attention at all costs.
 
 ---
 
-# Overcoming the "Sins of Attention" in Large Language Models with Verification and Retry Mechanisms
-
-In the dynamic field of artificial intelligence, **Large Language Models (LLMs)** like GPT-4 and Ollama's models have revolutionized how we interact with technology. These models excel at understanding and generating human-like text, powering applications ranging from chatbots to content creation tools. However, their reliance on **attention mechanisms**—a core component that enables them to focus on relevant parts of the input data—can sometimes lead to unintended "lossiness" in outputs. This phenomenon, which we can term the **"sins of attention,"** manifests as inaccuracies, omissions, or irrelevant outputs. In this blog post, we'll explore these challenges and demonstrate how implementing **verification and retry mechanisms** can enhance the reliability and accuracy of LLMs. Our case study will involve extracting movie titles from a MongoDB database using Ollama's LLM.
-
-## Understanding Attention Mechanisms in LLMs
+# Overcoming the ["Sins of Attention"](https://github.com/ranfysvalle02/lost-in-the-middle) 
 
 At the heart of LLMs lies the **attention mechanism**, a computational strategy that allows models to weigh the importance of different words in a sentence relative to each other. This mechanism enables models to capture contextual relationships and generate coherent, contextually relevant responses.
 
@@ -15,7 +11,7 @@ At the heart of LLMs lies the **attention mechanism**, a computational strategy 
 
 Consider the sentence: _"The cat sat on the mat because it was tired."_ The word "it" refers to "the cat." The attention mechanism helps the model understand this relationship by assigning higher weights to relevant words ("cat" in this case) when processing "it." This contextual understanding is what makes LLMs effective in generating meaningful text.
 
-## The "Sins of Attention": When Attention Goes Awry
+## [The "Sins of Attention"](https://github.com/ranfysvalle02/lost-in-the-middle)
 
 While attention mechanisms are pivotal for LLM performance, they are not infallible. The term **"sins of attention"** refers to various ways in which attention mechanisms can falter, leading to:
 
@@ -44,7 +40,6 @@ These challenges can hinder the reliability of applications relying on accurate 
 
 To overcome these challenges, implementing **verification and retry mechanisms** is essential. These mechanisms ensure that the LLM's outputs meet the expected criteria, and in cases where they don't, the system can attempt to rectify the issue automatically.
 
-Let's delve into the critical components of the solution:
 
 #### 1. Batch Processing with Verification
 
