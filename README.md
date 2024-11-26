@@ -1,6 +1,250 @@
 # phocus
 getting the LLM to pay attention at all costs.
 
+---
+
+# Overcoming the "Sins of Attention" in Large Language Models with Verification and Retry Mechanisms
+
+In the dynamic field of artificial intelligence, **Large Language Models (LLMs)** like GPT-4 and Ollama's models have revolutionized how we interact with technology. These models excel at understanding and generating human-like text, powering applications ranging from chatbots to content creation tools. However, their reliance on **attention mechanisms**—a core component that enables them to focus on relevant parts of the input data—can sometimes lead to unintended "lossiness" in outputs. This phenomenon, which we can term the **"sins of attention,"** manifests as inaccuracies, omissions, or irrelevant outputs. In this blog post, we'll explore these challenges and demonstrate how implementing **verification and retry mechanisms** can enhance the reliability and accuracy of LLMs. Our case study will involve extracting movie titles from a MongoDB database using Ollama's LLM.
+
+## Understanding Attention Mechanisms in LLMs
+
+At the heart of LLMs lies the **attention mechanism**, a computational strategy that allows models to weigh the importance of different words in a sentence relative to each other. This mechanism enables models to capture contextual relationships and generate coherent, contextually relevant responses.
+
+### How Attention Works
+
+Consider the sentence: _"The cat sat on the mat because it was tired."_ The word "it" refers to "the cat." The attention mechanism helps the model understand this relationship by assigning higher weights to relevant words ("cat" in this case) when processing "it." This contextual understanding is what makes LLMs effective in generating meaningful text.
+
+## The "Sins of Attention": When Attention Goes Awry
+
+While attention mechanisms are pivotal for LLM performance, they are not infallible. The term **"sins of attention"** refers to various ways in which attention mechanisms can falter, leading to:
+
+1. **Omission of Critical Information:** The model might overlook essential details, leading to incomplete or incorrect responses.
+2. **Contextual Misalignment:** The model may misinterpret the context, associating words or phrases incorrectly.
+3. **Format Deviations:** Responses may deviate from the expected format, making them difficult to parse or utilize effectively.
+4. **Inconsistency Across Batches:** When processing data in batches, the model might inconsistently handle different segments, leading to variable output quality.
+
+These issues are particularly evident in tasks that require precise data extraction or formatting, such as compiling lists from databases or generating structured reports.
+
+## Case Study: Extracting Movie Titles from MongoDB Using Ollama's LLM
+
+To illustrate the challenges posed by the "sins of attention" and the efficacy of verification and retry mechanisms, let's examine a practical scenario: extracting 1,000 movie titles from a MongoDB database using Ollama's LLM.
+
+### The Challenge
+
+When attempting to extract structured data from a database using an LLM, several issues can arise:
+
+- **Incomplete Data Extraction:** The model might miss some entries, leading to fewer results than expected.
+- **Formatting Errors:** The output might not adhere to the required format, making it difficult to parse programmatically.
+- **Inconsistent Results:** Different batches of data might yield varying levels of accuracy and completeness.
+
+These challenges can hinder the reliability of applications relying on accurate data extraction.
+
+### The Solution: Verification and Retry Mechanisms
+
+To overcome these challenges, implementing **verification and retry mechanisms** is essential. These mechanisms ensure that the LLM's outputs meet the expected criteria, and in cases where they don't, the system can attempt to rectify the issue automatically.
+
+Let's delve into the critical components of the solution:
+
+#### 1. Batch Processing with Verification
+
+Processing data in manageable batches allows for better control and error handling. After each batch is processed, the output is verified to ensure it meets the expected criteria.
+
+```python
+def send_request_to_model(context, batch_size, desiredModel, max_retries=10, backoff_factor=0):
+    system_message, prompt, user_instructions = prepare_prompt(context, batch_size)
+    
+    for attempt in range(1, max_retries + 1):
+        try:
+            response = ollama.chat(
+                model=desiredModel,
+                messages=[
+                    {'role': 'system', 'content': system_message},
+                    {'role': 'user', 'content': prompt},
+                    {'role': 'user', 'content': user_instructions},
+                ]
+            )
+            
+            if response.get('message') and response['message'].get('content'):
+                csv_output = response['message']['content']
+                csv_lines = [line.strip().strip('"') for line in csv_output.split('\n') 
+                             if line.strip() and line.strip() not in {'```', '.', '`'}]
+                
+                if len(csv_lines) == batch_size:
+                    return csv_lines
+                else:
+                    print(f"Attempt {attempt}: Expected {batch_size} titles, got {len(csv_lines)}.")
+            else:
+                print(f"Attempt {attempt}: No response content received.")
+                
+        except Exception as e:
+            print(f"Attempt {attempt}: Error communicating with the model: {e}")
+        
+        if attempt < max_retries:
+            sleep_time = backoff_factor ** attempt
+            print(f"Retrying in {sleep_time} seconds...")
+            time.sleep(sleep_time)
+        else:
+            print(f"Attempt {attempt}: Max retries reached.")
+    
+    return []
+```
+
+**Key Points:**
+
+- **Preparation of Prompts:** Crafting precise prompts guides the LLM to produce the desired output format.
+- **Verification:** After receiving the response, the script checks if the number of extracted titles matches the expected `batch_size`.
+- **Retry Mechanism:** If verification fails, the system retries the request up to `max_retries` times, implementing an exponential backoff strategy to handle transient issues.
+
+#### 2. Handling Failed Batches
+
+Some batches might fail even after all retry attempts. It's crucial to track these failed batches for manual inspection or further automated retries.
+
+```python
+failed_batches = []
+
+for i, doc in enumerate(formatted_text, 1):
+    tmp_batch.append(doc)
+    
+    if i % batch_size == 0:
+        context = parse_json_to_text(tmp_batch)
+        csv_lines = send_request_to_model(context, batch_size, desiredModel)
+        
+        if csv_lines:
+            final_result.extend(csv_lines)
+            total_docs += len(csv_lines)
+            batch_round += 1
+            print(f"Batch {batch_round}: Total documents processed: {total_docs}")
+        else:
+            failed_batches.append(list(tmp_batch))
+            print(f"Batch {batch_round + 1}: Failed to process. Will retry later.")
+        
+        tmp_batch = []
+```
+
+**Key Points:**
+
+- **Tracking Failures:** Failed batches are stored in a `failed_batches` list for later retries.
+- **Logging:** Informative print statements provide real-time feedback on processing status.
+
+#### 3. Retrying Failed Batches
+
+After processing all initial batches, the system attempts to reprocess any failed batches.
+
+```python
+if failed_batches:
+    print(f"\nRetrying {len(failed_batches)} failed batch(es)...")
+    remaining_failed_batches = []
+    for idx, batch in enumerate(failed_batches, 1):
+        print(f"\nRetrying Batch {idx} of {len(failed_batches)}:")
+        context = parse_json_to_text(batch)
+        current_batch_size = len(batch)
+        csv_lines = send_request_to_model(context, current_batch_size, desiredModel)
+        
+        if csv_lines:
+            final_result.extend(csv_lines)
+            total_docs += len(csv_lines)
+            batch_round += 1
+            print(f"Retry Batch {idx}: Total documents processed: {total_docs}")
+        else:
+            remaining_failed_batches.append(batch)
+            print(f"Retry Batch {idx}: Failed again.")
+    
+    if remaining_failed_batches:
+        print(f"\n{len(remaining_failed_batches)} batch(es) failed after retries. Please inspect manually.")
+        for idx, batch in enumerate(remaining_failed_batches, 1):
+            print(f"\nFailed Batch {idx}:")
+            for doc in batch:
+                print(doc.get('title', 'N/A'))
+    else:
+        print("\nAll batches processed successfully after retries.")
+```
+
+**Key Points:**
+
+- **Final Attempt:** The system makes a final attempt to process any batches that failed during the initial processing.
+- **Manual Inspection:** Batches that fail even after retries are logged for manual intervention, ensuring no data is permanently lost.
+
+## Empowering Through Best Practices
+
+By implementing verification and retry mechanisms, you can significantly enhance the reliability of LLMs in data processing tasks. Here are some best practices to consider:
+
+### 1. **Implement Robust Verification**
+
+Always verify the LLM's output against expected criteria, such as the number of items or the format of the data. Automated checks ensure consistency and completeness, reducing the risk of human error.
+
+```python
+if len(csv_lines) == batch_size:
+    # Success
+else:
+    # Trigger retry
+```
+
+### 2. **Design Effective Retry Strategies**
+
+Implement retry mechanisms with configurable parameters like `max_retries` and `backoff_factor`. Exponential backoff helps manage the timing of retries, reducing the likelihood of overwhelming the model or API.
+
+```python
+for attempt in range(1, max_retries + 1):
+    # Attempt processing
+    if success:
+        break
+    else:
+        sleep_time = backoff_factor ** attempt
+        time.sleep(sleep_time)
+```
+
+### 3. **Log and Monitor Failures**
+
+Maintain detailed logs of all processing attempts, especially failures. Monitoring allows you to identify patterns or persistent issues that may require manual intervention or further optimization.
+
+```python
+print(f"Attempt {attempt}: Error - {e}")
+```
+
+### 4. **Encapsulate Logic into Modular Functions**
+
+Organize your code into well-defined functions, each handling specific tasks like preparing prompts, sending requests, and parsing responses. This modularity enhances readability, maintainability, and scalability.
+
+```python
+def prepare_prompt(context, batch_size):
+    # Prepare prompts
+    return system_message, prompt, user_instructions
+```
+
+### 5. **Handle Partial and Edge Cases Gracefully**
+
+Ensure that your system can handle edge cases, such as the final batch containing fewer items than the standard batch size. Adjust expectations dynamically based on the context.
+
+```python
+if tmp_batch:
+    # Handle last batch
+```
+
+### 6. **Provide Clear Feedback and Logging**
+
+Use informative print statements or logging frameworks to provide real-time feedback on processing status. Clear logging aids in debugging and tracking the system's performance over time.
+
+```python
+print(f"Batch {batch_round}: Total documents processed: {total_docs}")
+```
+
+## Conclusion
+
+Large Language Models have undeniably transformed the landscape of artificial intelligence, offering unparalleled capabilities in understanding and generating human-like text. However, their reliance on attention mechanisms can sometimes lead to challenges such as data omission, contextual misalignment, and formatting errors—the so-called "sins of attention."
+
+By implementing **robust verification and retry mechanisms**, as demonstrated in our case study, you can significantly mitigate these issues. Such strategies ensure that LLMs perform reliably, delivering accurate and complete outputs even in the face of inherent limitations. 
+
+**Key Takeaways:**
+
+- **Verification is Crucial:** Always verify the LLM's output to ensure it meets expected criteria.
+- **Retry Mechanisms Enhance Reliability:** Implementing retries with strategies like exponential backoff can handle transient failures gracefully.
+- **Logging and Monitoring Aid in Maintenance:** Detailed logs help in identifying and addressing persistent issues.
+
+As AI continues to advance, developing systems that complement and reinforce LLM capabilities will be crucial in harnessing their full potential while minimizing their shortcomings. Embracing these best practices not only enhances the reliability of AI-driven applications but also empowers you to build more sophisticated and dependable AI systems in the future.
+
+---
+
 ## OUTPUT
 
 ```
