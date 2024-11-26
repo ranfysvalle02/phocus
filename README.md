@@ -1,5 +1,7 @@
 # phocus
 
+![](https://lightroom-photoshop-tutorials.com/wp-content/uploads/2020/08/The-Art-of-Focus-in-Photography-Capturing-Clarity-Amidst-Chaos.webp)
+
 getting the LLM to pay attention at all costs.
 
 ---
