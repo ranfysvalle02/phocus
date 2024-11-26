@@ -11,9 +11,25 @@ LLMs, are **pretrained on vast and diverse datasets** encompassing a wide array 
 
 **Attention mechanisms** are at the heart of this capability, enabling models to **focus on relevant information** while disregarding the rest. However, despite their pivotal role, **attention mechanisms are rarely the primary target for optimization** in model training. Instead, the emphasis is typically on overall performance metrics like accuracy and coherence. This oversight can lead to scenarios where the attention mechanism fails to prioritize critical information effectively, resulting in the "sins of attention" discussed earlier.
 
-### How Attention Works
+### The Concept of Attention
 
-Consider the sentence: _"The cat sat on the mat because it was tired."_ The word "it" refers to "the cat." The attention mechanism helps the model understand this relationship by assigning higher weights to relevant words ("cat" in this case) when processing "it." This contextual understanding is what makes LLMs effective in generating meaningful text.
+The concept of attention in LLMs is inspired by human cognition—specifically, how we selectively concentrate on certain aspects of information while ignoring others. This is similar to how when we read or listen, we don't pay equal attention to every word; instead, we focus more on the words that are most relevant to the overall meaning.
+
+### Vocabulary and Attention
+
+LLMs are trained on a vast amount of text data, during which they build a large vocabulary of words and phrases. Each word in the model's vocabulary is represented as a high-dimensional vector, which captures its semantic meaning based on the contexts in which it appears in the training data.
+
+### How Attention Works in LLMs
+
+In LLMs, the attention mechanism works by assigning different weights to different parts of the input. These weights determine how much 'attention' the model pays to each part of the input when generating each part of the output.
+
+Consider a more complex sentence translation task. When translating the English sentence "The quick brown fox jumps over the lazy dog" to Spanish ("El rápido zorro marrón salta sobre el perro perezoso"), the model needs to 'pay attention' to different words in the English sentence when generating each word in the Spanish sentence. 
+
+For instance, when generating the word "rápido", the model needs to pay more attention to the word "quick" in the English sentence. Similarly, when generating "zorro", it needs to focus more on "fox", and so on. 
+
+In this context, 'paying attention' means that the model assigns a higher weight to the relevant word in the input when generating each word in the output. These weights are determined based on the learned relationships between words in the model's vocabulary.
+
+This ability to focus on relevant parts of the input while generating the output is what makes LLMs so effective at tasks like translation, summarization, and question answering. However, it's not infallible, and can sometimes lead to errors or omissions—the so-called "sins of attention".
 
 ## [The "Sins of Attention"](https://github.com/ranfysvalle02/lost-in-the-middle)
 
