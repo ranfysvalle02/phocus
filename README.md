@@ -7,6 +7,10 @@ getting the LLM to pay attention at all costs.
 
 At the heart of LLMs lies the **attention mechanism**, a computational strategy that allows models to weigh the importance of different words in a sentence relative to each other. This mechanism enables models to capture contextual relationships and generate coherent, contextually relevant responses.
 
+LLMs, are **pretrained on vast and diverse datasets** encompassing a wide array of topics and formats. However, when these models are deployed for specific tasks—such as extracting movie titles from a database—they often encounter scenarios that diverge from their training data. This discrepancy necessitates the model to **make precise abstractions** from potentially **noisy or irrelevant inputs**. 
+
+**Attention mechanisms** are at the heart of this capability, enabling models to **focus on relevant information** while disregarding the rest. However, despite their pivotal role, **attention mechanisms are rarely the primary target for optimization** in model training. Instead, the emphasis is typically on overall performance metrics like accuracy and coherence. This oversight can lead to scenarios where the attention mechanism fails to prioritize critical information effectively, resulting in the "sins of attention" discussed earlier.
+
 ### How Attention Works
 
 Consider the sentence: _"The cat sat on the mat because it was tired."_ The word "it" refers to "the cat." The attention mechanism helps the model understand this relationship by assigning higher weights to relevant words ("cat" in this case) when processing "it." This contextual understanding is what makes LLMs effective in generating meaningful text.
