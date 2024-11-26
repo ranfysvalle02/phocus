@@ -162,7 +162,7 @@ if failed_batches:
 
 ## Best Practices
 
-By implementing verification and retry mechanisms, you can significantly enhance the reliability of LLMs in data processing tasks. Here are some best practices to consider:
+By implementing verification and retry mechanisms, you can significantly enhance the reliability of LLMs in data processing tasks. 
 
 ### 1. **Implement Robust Verification**
 
