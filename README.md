@@ -220,17 +220,7 @@ Maintain detailed logs of all processing attempts, especially failures. Monitori
 print(f"Attempt {attempt}: Error - {e}")
 ```
 
-### 4. **Encapsulate Logic into Modular Functions**
-
-Organize your code into well-defined functions, each handling specific tasks like preparing prompts, sending requests, and parsing responses. This modularity enhances readability, maintainability, and scalability.
-
-```python
-def prepare_prompt(context, batch_size):
-    # Prepare prompts
-    return system_message, prompt, user_instructions
-```
-
-### 5. **Handle Partial and Edge Cases Gracefully**
+### 4. **Handle Partial and Edge Cases Gracefully**
 
 Ensure that your system can handle edge cases, such as the final batch containing fewer items than the standard batch size. Adjust expectations dynamically based on the context.
 
@@ -239,7 +229,7 @@ if tmp_batch:
     # Handle last batch
 ```
 
-### 6. **Provide Clear Feedback and Logging**
+### 5. **Provide Clear Feedback and Logging**
 
 Use informative print statements or logging frameworks to provide real-time feedback on processing status. Clear logging aids in debugging and tracking the system's performance over time.
 
@@ -251,7 +241,7 @@ print(f"Batch {batch_round}: Total documents processed: {total_docs}")
 
 Large Language Models have undeniably transformed the landscape of artificial intelligence, offering unparalleled capabilities in understanding and generating human-like text. However, their reliance on attention mechanisms can sometimes lead to challenges such as data omission, contextual misalignment, and formatting errors—the so-called "sins of attention."
 
-By implementing **robust verification and retry mechanisms**, as demonstrated in our case study, you can significantly mitigate these issues. Such strategies ensure that LLMs perform reliably, delivering accurate and complete outputs even in the face of inherent limitations. 
+By implementing **robust verification and retry mechanisms**, you can significantly mitigate these issues. 
 
 **Key Takeaways:**
 
